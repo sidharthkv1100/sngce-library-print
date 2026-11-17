@@ -14,7 +14,6 @@ import {
   X,
   LogIn,
   LogOut,
-  ShieldCheck,
   User,
 } from 'lucide-react';
 import { fetchPrintOrders, subscribeToOrders, computeSummary } from '@/lib/orders-service';
@@ -225,28 +224,17 @@ export default function Navbar() {
                 <ul className="space-y-1.5 text-xs text-slate-600">
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <strong>Morning Slot:</strong> 8:30 AM – 9:30 AM (Before 1st period)
+                    <strong>Morning Slot:</strong> 8:30 AM – 9:30 AM
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <strong>Noon Slot:</strong> 12:30 PM – 1:30 PM (Lunch interval)
+                    <strong>Noon Slot:</strong> 12:30 PM – 1:30 PM
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-indigo-500" />
-                    <strong>Evening Slot:</strong> 3:30 PM – 4:30 PM (After college hours)
+                    <strong>Evening Slot:</strong> 3:30 PM – 4:30 PM
                   </li>
                 </ul>
-              </div>
-
-              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-900 space-y-1">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                  <span>Google Authentication &amp; Access:</span>
-                </div>
-                <p>
-                  Logins are powered by Google accounts. Students can queue and track prints.
-                  Only authorized library administrators (<code>sidharthkv1100@gmail.com</code>, <code>photocopysng@gmail.com</code>) have access to the Librarian Desk.
-                </p>
               </div>
 
               <button
