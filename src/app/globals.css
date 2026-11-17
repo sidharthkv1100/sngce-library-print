@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@source "../**";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide Next.js Development Watermark / Overlay Indicator */
+[data-nextjs-dev-overlay-indicator],
+[data-nextjs-toast],
+[data-nextjs-toast-wrapper],
+nextjs-portal {
+  display: none !important;
+}
