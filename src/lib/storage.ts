@@ -1,6 +1,5 @@
 import { PrintOrder, OrderStatus, QueueSummary } from '@/types';
-import { generateSampleUpiReceipt } from './sample-proof';
-import { createSamplePdf, createPdfDataUrl } from './pdf-utils';
+import { createSamplePdf } from './pdf-utils';
 
 export const STORAGE_KEY = 'sngce_library_print_orders_v1';
 export const MY_ORDERS_KEY = 'sngce_my_print_order_ids_v1';
@@ -232,120 +231,18 @@ export async function deleteOrder(orderId: string): Promise<void> {
 }
 
 /**
- * Creates 3 realistic initial sample orders across Morning, Noon, and Evening slots.
+ * Returns empty array for production mode.
  */
 export async function generateSampleOrders(): Promise<PrintOrder[]> {
-  // Order 1: Morning Slot - B&W - In Queue
-  const pdf1Bytes = await createSamplePdf(
-    'KTU Microprocessor Lab Manual & Record.pdf',
-    'Rahul Nair',
-    'CSE - S6',
-    14
-  );
-  const pdf1Url = createPdfDataUrl(pdf1Bytes);
-  const receipt1 = generateSampleUpiReceipt('Rahul Nair', 28, '418290314821', 'Google Pay');
-
-  // Order 2: Noon Slot - Colour - Ready for Pickup
-  const pdf2Bytes = await createSamplePdf(
-    'VLSI Design Seminar Presentation & Report.pdf',
-    'Ananya Krishna',
-    'ECE - S4',
-    8
-  );
-  const pdf2Url = createPdfDataUrl(pdf2Bytes);
-  const receipt2 = generateSampleUpiReceipt('Ananya Krishna', 80, '418290481239', 'PhonePe');
-
-  // Order 3: Evening Slot - B&W - In Queue
-  const pdf3Bytes = await createSamplePdf(
-    'Thermal Engineering Comprehensive Project Draft.pdf',
-    'Amal Mathew',
-    'ME - S8',
-    32
-  );
-  const pdf3Url = createPdfDataUrl(pdf3Bytes);
-  const receipt3 = generateSampleUpiReceipt('Amal Mathew', 64, '418290592817', 'Paytm');
-
-  const now = Date.now();
-
-  const seedOrders: PrintOrder[] = [
-    {
-      id: 'order-seed-101',
-      token: 101,
-      studentName: 'Rahul Nair',
-      rollNumber: 'SNG21CS042',
-      department: 'CSE - S6',
-      pdfFileName: 'KTU_Microprocessor_Lab_Manual.pdf',
-      pdfFileSize: 412 * 1024,
-      pageCount: 14,
-      printType: 'bw',
-      sides: 'single',
-      copies: 1,
-      totalAmount: 28,
-      pickupSlot: 'morning',
-      utr: '418290314821',
-      paymentProofDataUrl: receipt1,
-      pdfFileDataUrl: pdf1Url,
-      status: 'pending',
-      createdAt: new Date(now - 1000 * 60 * 45).toISOString(), // 45 mins ago
-    },
-    {
-      id: 'order-seed-102',
-      token: 102,
-      studentName: 'Ananya Krishna',
-      rollNumber: 'SNG22EC015',
-      department: 'ECE - S4',
-      pdfFileName: 'VLSI_Design_Seminar_Report.pdf',
-      pdfFileSize: 680 * 1024,
-      pageCount: 8,
-      printType: 'colour',
-      sides: 'double',
-      copies: 1,
-      totalAmount: 80,
-      pickupSlot: 'noon',
-      utr: '418290481239',
-      paymentProofDataUrl: receipt2,
-      pdfFileDataUrl: pdf2Url,
-      status: 'ready',
-      createdAt: new Date(now - 1000 * 60 * 25).toISOString(), // 25 mins ago
-    },
-    {
-      id: 'order-seed-103',
-      token: 103,
-      studentName: 'Amal Mathew',
-      rollNumber: 'SNG20ME033',
-      department: 'ME - S8',
-      pdfFileName: 'Thermal_Engineering_Project_Draft.pdf',
-      pdfFileSize: 1240 * 1024,
-      pageCount: 32,
-      printType: 'bw',
-      sides: 'double',
-      copies: 1,
-      totalAmount: 64,
-      pickupSlot: 'evening',
-      utr: '418290592817',
-      paymentProofDataUrl: receipt3,
-      pdfFileDataUrl: pdf3Url,
-      status: 'pending',
-      createdAt: new Date(now - 1000 * 60 * 10).toISOString(), // 10 mins ago
-    },
-  ];
-
-  return seedOrders;
+  return [];
 }
 
 export async function ensureSeedOrders(): Promise<PrintOrder[]> {
   if (typeof window === 'undefined') return [];
-  const existing = getStoredOrders();
-  if (existing.length === 0) {
-    const seed = await generateSampleOrders();
-    saveOrders(seed);
-    return seed;
-  }
-  return existing;
+  return getStoredOrders();
 }
 
 export async function resetToDefaultSeed(): Promise<PrintOrder[]> {
-  const seed = await generateSampleOrders();
-  saveOrders(seed);
-  return seed;
+  saveOrders([]);
+  return [];
 }
