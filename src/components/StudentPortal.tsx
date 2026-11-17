@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, Suspense } from 'react';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -233,7 +234,7 @@ function StudentPortalContent() {
 
   // Copy UPI ID
   const handleCopyUpi = () => {
-    navigator.clipboard.writeText('sngce.library@upi');
+    navigator.clipboard.writeText('918301873672@wahdfcbank');
     setCopiedUpi(true);
     setTimeout(() => setCopiedUpi(false), 2000);
   };
@@ -998,74 +999,31 @@ function StudentPortalContent() {
 
               {/* QR Code Container */}
               <div className="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center shadow-xs">
-                {/* Visual SVG QR Code */}
-                <div className="relative p-2 bg-white rounded-lg border border-slate-200">
-                  <svg
-                    width="140"
-                    height="140"
-                    viewBox="0 0 140 140"
-                    className="text-slate-900"
-                    fill="currentColor"
-                  >
-                    <rect x="10" y="10" width="35" height="35" rx="4" fill="#0f172a" />
-                    <rect x="17" y="17" width="21" height="21" rx="2" fill="#ffffff" />
-                    <rect x="23" y="23" width="9" height="9" fill="#0f172a" />
-
-                    <rect x="95" y="10" width="35" height="35" rx="4" fill="#0f172a" />
-                    <rect x="102" y="17" width="21" height="21" rx="2" fill="#ffffff" />
-                    <rect x="108" y="23" width="9" height="9" fill="#0f172a" />
-
-                    <rect x="10" y="95" width="35" height="35" rx="4" fill="#0f172a" />
-                    <rect x="17" y="102" width="21" height="21" rx="2" fill="#ffffff" />
-                    <rect x="23" y="108" width="9" height="9" fill="#0f172a" />
-
-                    <rect x="52" y="15" width="6" height="6" />
-                    <rect x="64" y="15" width="6" height="6" />
-                    <rect x="76" y="25" width="6" height="6" />
-                    <rect x="52" y="35" width="6" height="6" />
-                    <rect x="68" y="35" width="6" height="6" />
-                    <rect x="52" y="52" width="10" height="10" fill="#059669" />
-                    <rect x="68" y="52" width="6" height="6" />
-                    <rect x="80" y="52" width="6" height="6" />
-                    <rect x="95" y="52" width="12" height="6" />
-                    <rect x="115" y="52" width="6" height="12" />
-                    <rect x="15" y="52" width="8" height="8" />
-                    <rect x="28" y="65" width="8" height="8" />
-                    <rect x="52" y="68" width="8" height="8" />
-                    <rect x="68" y="68" width="12" height="12" fill="#0f172a" />
-                    <rect x="90" y="68" width="6" height="6" />
-                    <rect x="105" y="68" width="8" height="8" />
-                    <rect x="120" y="68" width="6" height="6" />
-                    <rect x="52" y="88" width="6" height="6" />
-                    <rect x="64" y="95" width="8" height="8" />
-                    <rect x="80" y="85" width="8" height="8" />
-                    <rect x="95" y="95" width="10" height="10" fill="#059669" />
-                    <rect x="115" y="88" width="8" height="8" />
-                    <rect x="52" y="112" width="8" height="8" />
-                    <rect x="68" y="112" width="6" height="6" />
-                    <rect x="80" y="112" width="10" height="10" />
-                    <rect x="105" y="115" width="15" height="6" />
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[9px] font-bold shadow-xs">
-                      UPI
-                    </span>
-                  </div>
+                {/* Visual Real UPI QR Code */}
+                <div className="relative p-2 bg-slate-900 rounded-2xl border border-slate-700 shadow-md max-w-[210px] w-full overflow-hidden flex flex-col items-center">
+                  <Image
+                    src="/upi-qr.jpg"
+                    alt="SNGCE Print UPI QR Code - Sidharth K V"
+                    width={200}
+                    height={260}
+                    className="w-full h-auto object-contain rounded-xl"
+                    priority
+                  />
                 </div>
 
                 <div className="mt-3">
-                  <div className="text-xs font-semibold text-slate-800">
-                    SNGCE Library Print Counter
+                  <div className="text-sm font-bold text-slate-900">
+                    Sidharth K V
                   </div>
-                  <div className="text-[11px] text-slate-500">Scan using any UPI App (GPay, PhonePe, Paytm)</div>
+                  <div className="text-[11px] text-slate-500">Scan using any UPI App (GPay, PhonePe, Paytm, WhatsApp)</div>
                 </div>
 
                 <div className="mt-3 w-full flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs">
-                  <span className="font-mono text-slate-700 font-medium">sngce.library@upi</span>
+                  <span className="font-mono text-slate-800 font-semibold select-all">918301873672@wahdfcbank</span>
                   <button
                     type="button"
                     onClick={handleCopyUpi}
-                    className="flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-semibold"
+                    className="flex items-center gap-1 text-emerald-700 hover:text-emerald-800 font-semibold cursor-pointer"
                   >
                     {copiedUpi ? (
                       <>
