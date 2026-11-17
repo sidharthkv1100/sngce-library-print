@@ -43,9 +43,6 @@ export default function RootLayout({
               <p className="font-medium text-slate-700">
                 Sree Narayana Gurukulam College of Engineering
               </p>
-              <p className="mt-1 text-slate-400">
-                Kadayiruppu, Kolenchery • Automated Document Queue Management System • Stage 3
-              </p>
             </div>
           </footer>
         </Providers>

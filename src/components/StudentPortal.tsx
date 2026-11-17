@@ -33,8 +33,7 @@ import {
   PICKUP_SLOTS,
   PRINT_RATES,
 } from '@/types';
-import { countPdfPages, createSamplePdf } from '@/lib/pdf-utils';
-import { generateSampleUpiReceipt } from '@/lib/sample-proof';
+import { countPdfPages } from '@/lib/pdf-utils';
 import {
   fetchPrintOrders,
   createPrintOrder,
@@ -53,6 +52,7 @@ function StudentPortalContent() {
   // Form State
   const [studentName, setStudentName] = useState('');
   const [rollNumber, setRollNumber] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
   const [department, setDepartment] = useState('');
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfFileName, setPdfFileName] = useState('');
@@ -155,7 +155,8 @@ function StudentPortalContent() {
     'CE - S6',
     'EEE - S4',
     'MCA - S2',
-    'AI&DS - S4',
+    'AH - S4',
+    'CY - S4',
   ];
 
   // Pages per sheet based on layout format
@@ -203,35 +204,6 @@ function StudentPortalContent() {
     }
   };
 
-  // Demo: Generate Sample PDF for instant testing
-  const handleDemoPdfLoad = async () => {
-    setIsAnalyzingPdf(true);
-    setPdfError(null);
-    try {
-      const student = studentName.trim() || 'Arjun Verma';
-      const roll = rollNumber.trim() || 'SNG24CS042';
-      const dept = department.trim() || 'CSE - S6';
-      const sampleBytes = await createSamplePdf(
-        'SNGCE Seminar Report on Distributed Cloud Systems.pdf',
-        student,
-        dept,
-        6
-      );
-      const sampleBlob = new Blob([sampleBytes as unknown as BlobPart], { type: 'application/pdf' });
-      const sampleFile = new File([sampleBlob], 'Seminar_Report_Distributed_Cloud.pdf', {
-        type: 'application/pdf',
-      });
-      await handlePdfUpload(sampleFile);
-      if (!studentName) setStudentName(student);
-      if (!rollNumber) setRollNumber(roll);
-      if (!department) setDepartment(dept);
-    } catch (err) {
-      console.error('Error generating demo PDF:', err);
-    } finally {
-      setIsAnalyzingPdf(false);
-    }
-  };
-
   // Handle Screenshot Upload
   const handleScreenshotUpload = (file: File) => {
     if (!file) return;
@@ -246,24 +218,6 @@ function StudentPortalContent() {
       setScreenshotPreview(reader.result as string);
     };
     reader.readAsDataURL(file);
-  };
-
-  // Demo: Generate Sample Screenshot
-  const handleDemoScreenshotLoad = () => {
-    const student = studentName.trim() || 'Student';
-    const amount = totalAmount > 0 ? totalAmount : 28;
-    const randomUtr = `4182${Math.floor(10000000 + Math.random() * 90000000)}`;
-    const mockReceiptSvg = generateSampleUpiReceipt(student, amount, randomUtr, 'Google Pay');
-
-    // Convert SVG data URL to a real File object for Supabase Storage upload
-    const svgContent = decodeURIComponent(mockReceiptSvg.split(',')[1]);
-    const blob = new Blob([svgContent], { type: 'image/svg+xml' });
-    const mockFile = new File([blob], `UPI_Receipt_${randomUtr}.svg`, { type: 'image/svg+xml' });
-
-    setScreenshotFile(mockFile);
-    setScreenshotPreview(mockReceiptSvg);
-    setUtr(randomUtr);
-    setUtrError(null);
   };
 
   // UTR Validation
@@ -296,6 +250,10 @@ function StudentPortalContent() {
     }
     if (!rollNumber.trim()) {
       setFormError('Please enter your Admission / Roll Number.');
+      return;
+    }
+    if (!mobileNumber.trim() || mobileNumber.replace(/\D/g, '').length !== 10) {
+      setFormError('Please enter a valid 10-digit mobile number.');
       return;
     }
     if (!department.trim()) {
@@ -332,6 +290,7 @@ function StudentPortalContent() {
       const created = await createPrintOrder({
         studentName: studentName.trim(),
         rollNumber: rollNumber.trim(),
+        mobileNumber: mobileNumber.trim(),
         department: department.trim(),
         pageCount,
         printType,
@@ -360,6 +319,7 @@ function StudentPortalContent() {
       setScreenshotFile(null);
       setScreenshotPreview('');
       setRollNumber('');
+      setMobileNumber('');
       setCopies(1);
       setIsCustomCopies(false);
 
@@ -451,9 +411,6 @@ function StudentPortalContent() {
               <span className="text-slate-200">Colour Printing</span>
               <span className="font-bold text-teal-300 text-sm">₹10 / page</span>
             </div>
-            <div className="text-[11px] text-slate-400 pt-1">
-              📍 Ground Floor Library Circulation Counter
-            </div>
           </div>
         </div>
 
@@ -486,7 +443,7 @@ function StudentPortalContent() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Full Name */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -499,6 +456,21 @@ function StudentPortalContent() {
                 onChange={(e) => setStudentName(e.target.value)}
                 placeholder="e.g. Rahul Nair"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              />
+            </div>
+
+            {/* Mobile Number (Mandatory) */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
+                Mobile Number <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="tel"
+                required
+                value={mobileNumber}
+                onChange={(e) => setMobileNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder="e.g. 9876543210"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all font-mono"
               />
             </div>
 
@@ -565,15 +537,6 @@ function StudentPortalContent() {
                 </h2>
               </div>
             </div>
-
-            <button
-              type="button"
-              onClick={handleDemoPdfLoad}
-              className="text-xs text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1 font-medium"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Use Demo PDF</span>
-            </button>
           </div>
 
           <input
@@ -1019,14 +982,6 @@ function StudentPortalContent() {
                 UPI Payment &amp; Proof Upload
               </h2>
             </div>
-            <button
-              type="button"
-              onClick={handleDemoScreenshotLoad}
-              className="text-xs text-emerald-700 hover:text-emerald-800 hover:underline flex items-center gap-1 font-medium"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Fill Mock Payment</span>
-            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1349,11 +1304,16 @@ function StudentPortalContent() {
                         #{order.token}
                       </span>
                       <div>
-                        <div className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 text-sm flex items-center gap-1.5 flex-wrap">
                           <span>{order.studentName}</span>
                           {order.rollNumber && order.rollNumber !== 'N/A' && (
                             <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200">
                               {order.rollNumber}
+                            </span>
+                          )}
+                          {order.mobileNumber && (
+                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-sky-50 text-sky-700 border border-sky-200">
+                              📞 {order.mobileNumber}
                             </span>
                           )}
                         </div>

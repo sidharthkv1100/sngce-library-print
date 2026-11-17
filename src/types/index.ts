@@ -9,6 +9,7 @@ export interface PrintOrder {
   token: number;
   studentName: string;
   rollNumber: string;
+  mobileNumber?: string;
   department: string;
   pdfFileName: string;
   pdfFileSize?: number;
@@ -32,6 +33,7 @@ export interface DbPrintOrder {
   token?: number;
   student_name: string;
   roll_number?: string;
+  mobile_number?: string;
   department: string;
   page_count: number;
   print_type: string;

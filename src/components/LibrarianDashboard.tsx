@@ -22,6 +22,7 @@ import {
   FileText,
   AlertCircle,
   Database,
+  Phone,
 } from 'lucide-react';
 import {
   PrintOrder,
@@ -100,10 +101,11 @@ export default function LibrarianDashboard() {
         const matchesToken = String(order.token).includes(query);
         const matchesName = order.studentName.toLowerCase().includes(query);
         const matchesRoll = (order.rollNumber || '').toLowerCase().includes(query);
+        const matchesMobile = (order.mobileNumber || '').toLowerCase().includes(query);
         const matchesDept = order.department.toLowerCase().includes(query);
         const matchesUtr = order.utr.toLowerCase().includes(query);
         const matchesFile = order.pdfFileName.toLowerCase().includes(query);
-        return matchesToken || matchesName || matchesRoll || matchesDept || matchesUtr || matchesFile;
+        return matchesToken || matchesName || matchesRoll || matchesMobile || matchesDept || matchesUtr || matchesFile;
       }
       return true;
     });
@@ -438,12 +440,22 @@ export default function LibrarianDashboard() {
 
                       {/* Student Name & Dept & Roll No */}
                       <td className="py-3.5 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 flex-wrap">
                           <span className="font-bold text-slate-900">{order.studentName}</span>
                           {order.rollNumber && order.rollNumber !== 'N/A' && (
                             <span className="px-1.5 py-0.5 rounded text-[11px] font-mono font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
                               {order.rollNumber}
                             </span>
+                          )}
+                          {order.mobileNumber && (
+                            <a
+                              href={`tel:${order.mobileNumber}`}
+                              className="px-1.5 py-0.5 rounded text-[11px] font-mono font-semibold bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100 flex items-center gap-1"
+                              title="Call Student"
+                            >
+                              <Phone className="w-2.5 h-2.5 text-sky-600" />
+                              <span>{order.mobileNumber}</span>
+                            </a>
                           )}
                         </div>
                         <div className="text-xs text-slate-500">{order.department}</div>
@@ -635,7 +647,7 @@ export default function LibrarianDashboard() {
               <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-slate-500 block">Student:</span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="font-bold text-slate-900 text-sm">
                       {selectedProofOrder.studentName}
                     </span>
@@ -643,6 +655,16 @@ export default function LibrarianDashboard() {
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-100 text-emerald-800">
                         {selectedProofOrder.rollNumber}
                       </span>
+                    )}
+                    {selectedProofOrder.mobileNumber && (
+                      <a
+                        href={`tel:${selectedProofOrder.mobileNumber}`}
+                        className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-sky-100 text-sky-800 hover:bg-sky-200 flex items-center gap-1"
+                        title="Call Student"
+                      >
+                        <Phone className="w-2.5 h-2.5 text-sky-600" />
+                        {selectedProofOrder.mobileNumber}
+                      </a>
                     )}
                   </div>
                   <span className="text-slate-500 block text-[11px]">

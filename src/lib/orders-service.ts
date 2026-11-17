@@ -6,12 +6,25 @@ import { PrintOrder, DbPrintOrder, OrderStatus, QueueSummary, PrintSides, PrintT
  */
 export function mapDbToPrintOrder(row: DbPrintOrder): PrintOrder {
   let rollNumber = row.roll_number || 'N/A';
+  let mobileNumber = row.mobile_number || '';
   let department = row.department;
-  if ((!row.roll_number || row.roll_number === 'N/A') && department?.includes('[') && department?.includes(']')) {
+
+  if (department?.includes('[') && department?.includes(']')) {
     const match = department.match(/^(.*?)\s*\[(.*?)\]$/);
     if (match) {
       department = match[1].trim();
-      rollNumber = match[2].trim();
+      const details = match[2].trim();
+      if (details.includes('| Mob:')) {
+        const parts = details.split('| Mob:');
+        if (!row.roll_number || row.roll_number === 'N/A') {
+          rollNumber = parts[0].trim();
+        }
+        if (!row.mobile_number) {
+          mobileNumber = parts[1].trim();
+        }
+      } else if (!row.roll_number || row.roll_number === 'N/A') {
+        rollNumber = details;
+      }
     }
   }
 
@@ -20,6 +33,7 @@ export function mapDbToPrintOrder(row: DbPrintOrder): PrintOrder {
     token: row.token || 100,
     studentName: row.student_name,
     rollNumber,
+    mobileNumber,
     department,
     pageCount: row.page_count,
     printType: (row.print_type as PrintType) || 'bw',
@@ -68,6 +82,7 @@ export async function fetchPrintOrders(): Promise<PrintOrder[]> {
 export async function createPrintOrder(order: {
   studentName: string;
   rollNumber: string;
+  mobileNumber?: string;
   department: string;
   pageCount: number;
   printType: PrintType;
@@ -84,6 +99,7 @@ export async function createPrintOrder(order: {
   const dbPayload: Omit<DbPrintOrder, 'id' | 'created_at'> = {
     student_name: order.studentName,
     roll_number: order.rollNumber.trim(),
+    mobile_number: order.mobileNumber?.trim() || '',
     department: order.department,
     page_count: order.pageCount,
     print_type: order.printType,
@@ -104,15 +120,24 @@ export async function createPrintOrder(order: {
     .select()
     .single();
 
-  // Graceful fallback: If the remote Supabase table schema hasn't had the roll_number column added yet,
-  // retry without roll_number to avoid blocking order creation.
-  if (error && (error.code === 'PGRST204' || error.message?.includes('roll_number'))) {
-    console.warn('Supabase table missing roll_number column; executing backwards-compatible insert...');
+  // Graceful fallback: If the remote Supabase table schema hasn't had the roll_number or mobile_number column added yet,
+  // retry without missing columns to avoid blocking order creation.
+  if (
+    error &&
+    (error.code === 'PGRST204' ||
+      error.message?.includes('roll_number') ||
+      error.message?.includes('mobile_number') ||
+      error.message?.includes('column'))
+  ) {
+    console.warn('Supabase table missing custom columns; executing backwards-compatible insert...');
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { roll_number: _omitted, ...safePayload } = dbPayload as any;
-    if (order.rollNumber && order.rollNumber.trim()) {
-      safePayload.department = `${order.department} [${order.rollNumber.trim()}]`;
-    }
+    const { roll_number: _omittedRoll, mobile_number: _omittedMob, ...safePayload } = dbPayload as any;
+    
+    // Safely store roll number and mobile number inside department field: e.g. "ECE - S6 [SNG24EC012 | Mob: 9876543210]"
+    const rollPart = order.rollNumber && order.rollNumber.trim() ? order.rollNumber.trim() : 'N/A';
+    const mobPart = order.mobileNumber && order.mobileNumber.trim() ? ` | Mob: ${order.mobileNumber.trim()}` : '';
+    safePayload.department = `${order.department} [${rollPart}${mobPart}]`;
+
     const retryResult = await supabase
       .from('print_orders')
       .insert([safePayload])

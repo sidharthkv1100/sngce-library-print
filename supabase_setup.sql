@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.print_orders (
 
 -- Schema Migration (run safely on already existing tables)
 ALTER TABLE public.print_orders ADD COLUMN IF NOT EXISTS roll_number TEXT NOT NULL DEFAULT 'N/A';
+ALTER TABLE public.print_orders ADD COLUMN IF NOT EXISTS mobile_number TEXT;
 
 -- Index for fast ordering and filtering by slot and status
 CREATE INDEX IF NOT EXISTS idx_print_orders_created_at ON public.print_orders (created_at DESC);
