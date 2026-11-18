@@ -174,15 +174,9 @@ export default function LibrarianDashboard() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-              Library Print Desk • Queue Management
+              Library Print Desk
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200">
-              Supabase Live
-            </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Real-time print jobs queue synced with Supabase PostgreSQL database &amp; Storage bucket.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -190,8 +184,8 @@ export default function LibrarianDashboard() {
             type="button"
             onClick={loadOrders}
             disabled={isLoading}
-            className="px-3 py-1.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-700 flex items-center gap-1.5 transition-colors"
-            title="Refresh from Supabase"
+            className="px-3 py-1.5 rounded-xl border border-slate-300 hover:bg-slate-100 text-xs font-medium text-slate-700 flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Refresh Queue"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
             <span>Refresh Queue</span>
@@ -393,7 +387,7 @@ export default function LibrarianDashboard() {
             <FileText className="w-10 h-10 text-slate-300 mx-auto" />
             <h3 className="font-semibold text-slate-700">No print jobs found</h3>
             <p className="text-xs text-slate-400">
-              No orders matched your current slot, status, or search filters in Supabase.
+              No orders matched your current slot, status, or search filters.
             </p>
           </div>
         ) : (
@@ -561,7 +555,7 @@ export default function LibrarianDashboard() {
                           type="button"
                           onClick={() => handleOpenPdf(order)}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
-                          title="Open PDF directly from Supabase Storage"
+                          title="Open and print document"
                         >
                           <Printer className="w-3.5 h-3.5 text-emerald-400" />
                           <span>Print PDF</span>
@@ -605,7 +599,7 @@ export default function LibrarianDashboard() {
                             disabled={isUpdating}
                             onClick={() => handleStatusChange(order.id, 'Pending')}
                             className="text-[11px] text-slate-400 hover:text-slate-700 underline pl-1 disabled:opacity-50 cursor-pointer"
-                            title="Revert status to Pending in Supabase"
+                            title="Revert status to Pending"
                           >
                             Undo
                           </button>
